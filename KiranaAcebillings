@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Algum Creations Billing 2026</title>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+body{
+  font-family:'Segoe UI',sans-serif;
+  margin:0;
+  padding:20px;
+  background:linear-gradient(135deg,#1e1e2f,#2b1055);
+  color:white;
+}
+.container{
+  max-width:1500px;
+  margin:auto;
+  background:#111827;
+  padding:40px;
+  border-radius:35px;
+  box-shadow:0 0 60px rgba(255,215,0,0.3);
+}
+.brand{text-align:center;margin-bottom:20px;}
+.brand h1{
+  margin:0;
+  font-size:32px;
+  background:linear-gradient(45deg,gold,#ffcc00);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+.brand p{color:#ccc;}
+input, select{
+  padding:10px;
+  border-radius:10px;
+  border:none;
+  font-size:14px;
+  margin-bottom:10px;
+  background:#1f2937;
+  color:white;
+}
+button{
+  padding:18px 24px;
+  border:none;
+  border-radius:18px;
+  cursor:pointer;
+  font-weight:bold;
+  margin-top:16px;
+  transition:0.3s;
+}
+.primary{background:linear-gradient(45deg,#ff9800,#ff5722);color:white;}
+.secondary{background:linear-gradient(45deg,#25D366,#128C7E);}
+.download{background:linear-gradient(45deg,#2196f3,#3f51b5);}
+.thermal{background:linear-gradient(45deg,#ff00cc,#3333ff);}
+.advanceBtn{background:linear-gradient(45deg,#00c6ff,#0072ff);}
+button:hover{transform:scale(1.05);}
+.itemRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center;}
+.removeBtn{
+  background:red;
+  color:white;
+  border:none;
+  border-radius:50%;
+  width:35px;
+  height:35px;
+  cursor:pointer;
+  font-weight:bold;
+  font-size:22px;
+}
+.invoice{
+  background:white;
+  color:black;
+  padding:30px;
+  border-radius:20px;
+  position:relative;
+  margin-top:25px;
+}
+.statusBadge{
+  position:absolute;
+  top:20px;
+  right:20px;
+  padding:8px 15px;
+  border-radius:20px;
+  font-weight:bold;
+  color:white;
+}
+.paid{ background:green; }
+.due{ background:red; }
+.partial{ background:orange; }
+.invoice table{
+  width:100%;
+  border-collapse:collapse;
+  margin-top:15px;
+}
+.invoice th{
+  background:#111827;
+  color:white;
+}
+.invoice th, .invoice td{
+  padding:10px;
+  border:1px solid #ddd;
+  text-align:center;
+}
+.totalBox{
+  margin-top:24px;
+  text-align:right;
+  font-weight:bold;
+  font-size:22px;
+}
+#totalPreview{
+  font-weight:bold;
+  margin:16px 0;
+  font-size:24px;
+}
+.clientPopup{
+  background:#222;
+  padding:15px;
+  border-radius:12px;
+  margin-bottom:15px;
+}
+.clientPopup p{
+  margin:3px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="brand">
+<h1>Gupta Kirana Store</h1>
+<p>Everything For Your Need</p>
+<p>Developed By Rohit Gupta</p>
+</div>
+
+<input type="text" id="customer" placeholder="Client Name" style="width:100%;">
+<input type="tel" id="mobile" value="+91" style="width:100%;">
+
+<button class="primary" onclick="fetchClient()">Fetch Client</button>
+
+<div id="clientDetails"></div>
+
+<div id="items"></div>
+<div id="totalPreview">Total: ₹0</div>
+<button class="primary" onclick="addRow()">+ Add Service</button>
+
+<br><br>
+<input type="number" id="discount" placeholder="Discount Amount ₹" style="width:200px;">
+<br><br>
+
+<select id="paymentMode">
+<option value="Online">Online</option>
+<option value="Cash">Cash</option>
+</select>
+
+<input type="number" id="paidAmount" placeholder="Paid Amount ₹">
+<br><br>
+
+<button class="primary" onclick="createBill()">Generate Invoice</button>
+
+<input type="number" id="advanceAmount" placeholder="Enter Amount ₹" style="width:200px; margin-left:15px;">
+<button class="advanceBtn" onclick="generateAdvanceQR('advance')">Advance QR</button>
+<button class="advanceBtn" onclick="generateAdvanceQR('full')">Full Payment QR</button>
+
+<div id="advancePreview"></div>
+<div id="billPreview" style="margin-top:30px;"></div>
+
+<div id="afterButtons" style="display:none;">
+<button class="download" onclick="downloadBill()">Download</button>
+<button class="secondary" onclick="shareWhatsApp()">WhatsApp</button>
+<button class="thermal" onclick="window.print()">Print</button>
+</div>
+
+</div>
+
+<script>
+const UPI_ID="tinu01jmp@okhdfcbank";
+let advanceUpiLink="";
+let billUpiLink="";
+const SHEET_API="https://script.google.com/macros/s/AKfycbz7L7LsHuTui703d62Yt4PO4Wtw69a4ALM-eVJqJmalwYcygLgq6EPPS8kuwRQNh28dcQ/exec";
+
+const services=[
+{name:"Rice (Basmati) 1kg",price:120},
+{name:"Rice (Regular) 1kg",price:55},
+{name:"Wheat Flour (Atta) 1kg",price:45},
+{name:"Maida 1kg",price:50},
+{name:"Suji / Rava 1kg",price:45},
+{name:"Besan 1kg",price:80},
+{name:"Toor Dal 1kg",price:140},
+{name:"Moong Dal 1kg",price:130},
+{name:"Masoor Dal 1kg",price:110},
+{name:"Chana Dal 1kg",price:95},
+{name:"Urad Dal 1kg",price:140},
+{name:"Rajma 1kg",price:120},
+{name:"Kabuli Chana 1kg",price:110},
+{name:"White Chana 1kg",price:90},
+{name:"Sugar 1kg",price:45},
+{name:"Salt 1kg",price:20},
+{name:"Rock Salt 1kg",price:35},
+{name:"Mustard Oil 1L",price:170},
+{name:"Refined Oil 1L",price:150},
+{name:"Sunflower Oil 1L",price:160},
+{name:"Ghee 1L",price:600},
+{name:"Butter 500g",price:280},
+{name:"Milk 1L",price:60},
+{name:"Curd 500g",price:35},
+{name:"Paneer 200g",price:90},
+{name:"Tea 250g",price:140},
+{name:"Coffee 100g",price:120},
+{name:"Poha 1kg",price:50},
+{name:"Sabudana 1kg",price:90},
+{name:"Peanuts 1kg",price:110},
+{name:"Almonds 250g",price:220},
+{name:"Cashews 250g",price:240},
+{name:"Raisins 250g",price:140},
+{name:"Turmeric Powder 200g",price:40},
+{name:"Red Chilli Powder 200g",price:60},
+{name:"Coriander Powder 200g",price:45},
+{name:"Garam Masala 100g",price:55},
+{name:"Cumin Seeds 100g",price:35},
+{name:"Mustard Seeds 100g",price:25},
+{name:"Black Pepper 50g",price:45},
+{name:"Cloves 25g",price:35},
+{name:"Cardamom 25g",price:55},
+{name:"Maggi Noodles",price:14},
+{name:"Pasta 500g",price:60},
+{name:"Vermicelli 500g",price:45},
+{name:"Oats 500g",price:160},
+{name:"Cornflakes 500g",price:190},
+{name:"Biscuits (Parle-G)",price:10},
+{name:"Biscuits (Marie)",price:30},
+{name:"Cream Biscuits",price:35},
+{name:"Bread",price:40},
+{name:"Jam 500g",price:140},
+{name:"Ketchup 500g",price:120},
+{name:"Pickle 500g",price:130},
+{name:"Honey 500g",price:180},
+{name:"Chips Packet",price:20},
+{name:"Namkeen 200g",price:40},
+{name:"Cold Drink 750ml",price:40},
+{name:"Mineral Water 1L",price:20},
+{name:"Soap (Bath)",price:35},
+{name:"Detergent Powder 1kg",price:110},
+{name:"Washing Bar",price:20},
+{name:"Dishwash Liquid 500ml",price:110},
+{name:"Toothpaste 100g",price:55},
+{name:"Toothbrush",price:20},
+{name:"Shampoo Sachet",price:1},
+{name:"Shampoo Bottle 180ml",price:130},
+{name:"Hair Oil 200ml",price:120},
+{name:"Face Wash 100ml",price:140},
+{name:"Handwash 250ml",price:90},
+{name:"Toilet Cleaner 500ml",price:95},
+{name:"Phenyl 1L",price:140},
+{name:"Agarbatti Pack",price:30},
+{name:"Matchbox",price:2},
+{name:"Candle Pack",price:25},
+{name:"Battery AA Pair",price:40},
+{name:"Notebook",price:40},
+{name:"Pen",price:10},
+{name:"Pencil",price:5},
+{name:"Eraser",price:5},
+{name:"Sharpener",price:5},
+{name:"Baby Diaper Small Pack",price:120},
+{name:"Sanitary Pads Pack",price:120},
+{name:"Mosquito Coil",price:35},
+{name:"Mosquito Liquid Refill",price:85},
+{name:"Ice Cream Cup",price:25},
+{name:"Chocolate Bar",price:20},
+{name:"Soya Chunks 1kg",price:130},
+{name:"Chilli Sauce 200g",price:65},
+{name:"Soy Sauce 200ml",price:70},
+{name:"Baking Soda 100g",price:20},
+{name:"Custard Powder 100g",price:40},
+{name:"Dry Yeast 50g",price:30},
+{name:"Papad 200g",price:60}
+];
+
+// --- ADD SERVICE ROW WITH REMOVE BUTTON ---
+function addRow(){
+  let div=document.createElement("div");
+  div.className="itemRow";
+
+  let options="";
+  services.forEach((service,index)=>{
+    options+=`<option value="${index}">${service.name} - ₹${service.price}</option>`;
+  });
+
+  div.innerHTML=`
+    <select class="serviceSelect">${options}</select>
+    <input type="number" class="qty" value="1" min="1">
+    <button class="removeBtn" onclick="removeRow(this)">×</button>
+  `;
+  document.getElementById("items").appendChild(div);
+  updateTotal();
+}
+
+// --- REMOVE SERVICE ROW ---
+function removeRow(btn){
+  btn.parentElement.remove();
+  updateTotal();
+}
+
+// --- UPDATE TOTAL ---
+function updateTotal(){
+  let total=0;
+  document.querySelectorAll(".itemRow").forEach(row=>{
+    let idx=row.querySelector(".serviceSelect").value;
+    let qty=parseFloat(row.querySelector(".qty").value)||1;
+    total+=services[idx].price*qty;
+  });
+  document.getElementById("totalPreview").innerText="Total: ₹"+total.toFixed(2);
+}
+document.addEventListener("input", e=>{
+  if(e.target.classList.contains("qty") || e.target.classList.contains("serviceSelect")){
+    updateTotal();
+  }
+});
+
+addRow(); // initial row
+
+// --- FETCH CLIENT DETAILS ---
+async function fetchClient(){
+  let phone=document.getElementById("mobile").value.replace(/\D/g,"");
+  if(phone.length===10) phone="91"+phone;
+  
+  try{
+    const res=await fetch(SHEET_API,{
+      method:'POST',
+      body:JSON.stringify({action:"getClient",phone})
+    });
+    const data=await res.json();
+
+    let popup=document.getElementById("clientDetails");
+    popup.innerHTML="";
+    if(data.found){
+      popup.innerHTML=`
+      <div class="clientPopup">
+        <p><strong>Name:</strong> ${data.name}</p>
+        <p><strong>Total Bill:</strong> ₹${data.totalBill}</p>
+        <p><strong>Total Paid:</strong> ₹${data.totalPaid}</p>
+        <p><strong>Total Due:</strong> ₹${data.totalDue}</p>
+        <p><strong>Last Updated:</strong> ${data.lastUpdated||"N/A"}</p>
+      </div>`;
+      document.getElementById("customer").value=data.name;
+    }else{
+      popup.innerHTML=`<p>Client not found, you can add new.</p>`;
+    }
+  }catch(err){
+    console.error(err);
+    alert("Error fetching client from Sheet.");
+  }
+}
+
+// --- ADVANCE / FULL PAYMENT QR ---
+function generateAdvanceQR(type){
+  let customer=document.getElementById("customer").value || "N/A";
+  let rows=document.querySelectorAll(".itemRow");
+  let subtotal=0;
+  rows.forEach(row=>{
+    let serviceIndex=row.querySelector(".serviceSelect").value;
+    let service=services[serviceIndex];
+    let qty=parseFloat(row.querySelector(".qty").value)||1;
+    subtotal+=service.price*qty;
+  });
+  let amount=0,title="";
+  if(type==="full"){ amount=subtotal; title="FULL PAYMENT REQUEST"; }
+  else{ amount=parseFloat(document.getElementById("advanceAmount").value)||0; if(amount<=0){ alert("Enter Advance"); return; } title="ADVANCE PAYMENT REQUEST"; }
+
+  advanceUpiLink=`upi://pay?pa=${UPI_ID}&pn=Algum%20Creations&am=${amount.toFixed(2)}&cu=INR`;
+  let date=new Date().toLocaleDateString();
+  let receiptHTML=`
+  <div class="invoice">
+    <h3 style="text-align:center;">${title}</h3>
+    <hr>
+    <p><strong>Customer:</strong> ${customer}</p>
+    <p><strong>Amount:</strong> ₹${amount.toFixed(2)}</p>
+    <p><strong>Date:</strong> ${date}</p>
+    <div id="advanceQR" style="margin-top:15px;"></div>
+    <br>
+    <button class="secondary" onclick="shareAdvanceWhatsApp('${amount.toFixed(2)}','${title}')">Share WhatsApp</button>
+  </div>`;
+  document.getElementById("advancePreview").innerHTML=receiptHTML;
+  new QRCode(document.getElementById("advanceQR"), advanceUpiLink);
+}
+
+function shareAdvanceWhatsApp(amount,title){
+  let mobile=document.getElementById("mobile").value.replace(/\D/g,"");
+  if(mobile.length===10) mobile="91"+mobile;
+  let message=`*GUPTA KIRANA STORE*\n${title}\nClient: ${document.getElementById("customer").value}\nAmount: ₹${amount}\nPayment Link: ${advanceUpiLink}`;
+  window.open(`https://wa.me/${mobile}?text=${encodeURIComponent(message)}`,"_blank");
+}
+
+// --- CREATE BILL AND POST TO SHEET ---
+async function createBill(){
+  let customer=document.getElementById("customer").value || "N/A";
+  let mobile=document.getElementById("mobile").value.replace(/\D/g,"")||"N/A";
+  if(mobile.length===10) mobile="91"+mobile;
+
+  let paymentMode=document.getElementById("paymentMode").value;
+  let paid=parseFloat(document.getElementById("paidAmount").value)||0;
+  let discount=parseFloat(document.getElementById("discount").value)||0;
+
+  let rows=document.querySelectorAll(".itemRow");
+  let subtotal=0;
+  let tableHTML="<table><tr><th>Service</th><th>Qty</th><th>Price</th><th>Total</th></tr>";
+  rows.forEach(row=>{
+    let serviceIndex=row.querySelector(".serviceSelect").value;
+    let service=services[serviceIndex];
+    let qty=parseFloat(row.querySelector(".qty").value)||1;
+    let amount=service.price*qty;
+    subtotal+=amount;
+    tableHTML+=`<tr><td>${service.name}</td><td>${qty}</td><td>₹${service.price}</td><td>₹${amount}</td></tr>`;
+  });
+  tableHTML+="</table>";
+
+  let total=subtotal-discount;
+  let balance=total-paid;
+  let status=balance<=0?"PAID":paid>0?"PARTIAL":"DUE";
+
+  let date=new Date().toLocaleDateString();
+  let invoiceNo="AC-"+Date.now().toString().slice(-6);
+
+  // --- BUILD BILL HTML ---
+  let billHTML=`
+  <div id="finalBill" class="invoice">
+    <div class="statusBadge ${status==="PAID"?"paid":status==="PARTIAL"?"partial":"due"}">${status}</div>
+    <h2 style="text-align:center;">ALGUM CREATIONS</h2>
+    <p style="text-align:center;">One Stop Solution For Digital Business</p>
+    <hr>
+    <p><strong>Invoice No:</strong> ${invoiceNo}</p>
+    <p><strong>Date:</strong> ${date}</p>
+    <p><strong>Client:</strong> ${customer}</p>
+    <p><strong>Mobile:</strong> ${mobile}</p>
+    <p><strong>Payment Mode:</strong> ${paymentMode}</p>
+    ${tableHTML}
+    <div class="totalBox">
+      Subtotal: ₹${subtotal.toFixed(2)}<br>
+      Discount: ₹${discount.toFixed(2)}<br>
+      Grand Total: ₹${total.toFixed(2)}<br>
+      Paid: ₹${paid.toFixed(2)}<br>
+      Balance: ₹${balance.toFixed(2)}
+    </div>
+    ${balance>0?`<div style="margin-top:20px;text-align:center;"><h3>Scan to Pay ₹${balance.toFixed(2)}</h3><div id="billQR"></div></div>`:""}
+  </div>`;
+  document.getElementById("billPreview").innerHTML=billHTML;
+  document.getElementById("afterButtons").style.display="block";
+
+  if(balance>0){
+    billUpiLink=`upi://pay?pa=${UPI_ID}&pn=Algum%20Creations&am=${balance.toFixed(2)}&cu=INR`;
+    new QRCode(document.getElementById("billQR"), billUpiLink);
+  }
+
+  window.billData={customer,mobile,total,status};
+
+  // --- POST TO GOOGLE SHEET ---
+  try{
+    const res=await fetch(SHEET_API,{
+      method:'POST',
+      body:JSON.stringify({action:"addBill",phone:mobile,name:customer,amount:total})
+    });
+    const data=await res.json();
+    if(data.success) console.log("Bill added ✅");
+    else console.warn("Failed to add bill");
+    if(paid>0){
+      const payRes=await fetch(SHEET_API,{
+        method:'POST',
+        body:JSON.stringify({action:"addPayment",phone:mobile,amount:paid,mode:paymentMode})
+      });
+      const payData=await payRes.json();
+      if(payData.success) console.log("Payment added ✅");
+    }
+  }catch(err){ console.error("Sheet update error:",err);}
+}
+
+function downloadBill(){
+  html2canvas(document.getElementById("finalBill")).then(canvas=>{
+    let link=document.createElement("a");
+    link.download="Algum_Creations_Invoice.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
+}
+
+function shareWhatsApp(){
+  let data=window.billData;
+  if(!data){ alert("Generate Invoice First"); return; }
+  let mobile=data.mobile.replace(/\D/g,"");
+  if(mobile.length===10) mobile="91"+mobile;
+  let message=`*ALGUM CREATIONS*\nInvoice Status: ${data.status}\nTotal: ₹${data.total}\n${data.status!=="PAID"?"Payment Link:\n"+billUpiLink+"\n":""}`;
+  window.open(`https://wa.me/${mobile}?text=${encodeURIComponent(message)}`,"_blank");
+}
+</script>
+</body>
+</html>
