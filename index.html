@@ -278,8 +278,16 @@ button:hover{
 <button class="primary" style="background:linear-gradient(45deg,#16a34a,#22c55e); color:white;" onclick="createBill()">Generate Invoice</button>
 
 <input type="number" id="advanceAmount" placeholder="Enter Amount ₹" style="width:200px; margin-left:15px;">
-<button class="advanceBtn" onclick="generateAdvanceQR('advance')">Pay Due (QR)</button>
-<button class="advanceBtn" onclick="generateAdvanceQR('full')">Pay Full (QR)</button>
+
+<!-- Pay Due QR -->
+<button class="advanceBtn" style="background:linear-gradient(45deg,#f59e0b,#fbbf24); color:white;" onclick="generateAdvanceQR('advance')">
+  Pay Due (QR)
+</button>
+
+<!-- Pay Full QR -->
+<button class="advanceBtn" style="background:linear-gradient(45deg,#16a34a,#22c55e); color:white;" onclick="generateAdvanceQR('full')">
+  Pay Full (QR)
+</button>
 
 <div id="advancePreview"></div>
 <div id="billPreview" style="margin-top:30px;"></div>
