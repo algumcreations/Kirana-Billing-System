@@ -49,7 +49,9 @@
         .header h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--brand); letter-spacing: -0.5px; }
         .header p { margin: 2px 0 0; color: var(--text-soft); font-size: 11px; text-transform: uppercase; font-weight: 700; }
 
-        .theme-btn { background: var(--brand-soft); border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; color: var(--brand); font-size: 18px; }
+        .header-btns { display: flex; gap: 10px; }
+        .theme-btn, .reset-btn { background: var(--brand-soft); border: none; width: 42px; height: 42px; border-radius: 12px; cursor: pointer; color: var(--brand); font-size: 18px; display: flex; align-items: center; justify-content: center; }
+        .reset-btn { color: var(--danger); background: #fee2e2; }
 
         .section-label { font-size: 11px; font-weight: 800; color: var(--brand); text-transform: uppercase; margin: 20px 0 10px; display: block; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
@@ -59,7 +61,6 @@
         input, select { padding: 12px; border-radius: 12px; border: 1.5px solid var(--border); font-size: 16px; outline: none; background: var(--card); color: var(--text); width: 100%; }
         input:focus { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
 
-        /* Custom Mobile Input with Prefix */
         .mobile-input-wrapper { display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: 12px; background: var(--card); overflow: hidden; }
         .mobile-prefix { background: var(--brand-soft); color: var(--brand); font-weight: 800; padding: 12px; border-right: 1.5px solid var(--border); }
         .mobile-input-wrapper input { border: none; border-radius: 0; }
@@ -70,6 +71,15 @@
         .item-list { margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 15px; }
         .item-row { display: grid; grid-template-columns: 2.5fr 0.8fr 0.8fr 42px; gap: 10px; margin-bottom: 12px; align-items: center; }
         .btn-remove { background: #fee2e2; color: var(--danger); border: none; height: 42px; border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 18px; }
+
+        /* GST Toggle styling */
+        .gst-toggle-card { display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; background: var(--bg); border-radius: 15px; border: 1px solid var(--border); margin-top: 15px; }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .slider { background-color: var(--brand); }
+        input:checked + .slider:before { transform: translateX(20px); }
 
         .breakdown-card { background: var(--brand-soft); border-radius: 20px; padding: 20px; margin: 25px 0; border: 1px solid var(--brand); }
         .breakdown-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
@@ -84,6 +94,11 @@
         .inv-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
         .inv-table th { border-bottom: 2px solid #000; text-align: left; padding: 10px; font-size: 12px; }
         .inv-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
+
+        /* Invoice Breakdown Row Fix */
+        .inv-breakdown-table { width: 240px; float: right; font-size: 13px; margin-top: 10px; }
+        .inv-breakdown-table td { padding: 4px 0; }
+        .inv-breakdown-table .grand-total { border-top: 2px solid #000; margin-top: 8px; padding-top: 8px; font-weight: 900; font-size: 18px; }
 
         .btn-action { padding: 15px; border-radius: 14px; border: none; font-weight: 800; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-main { background: var(--brand); color: white; width: 100%; margin-top: 10px; }
@@ -109,7 +124,10 @@
             <h1>Gupta Kirana Store</h1>
             <p>Digital Billing SaaS 2026</p>
         </div>
-        <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+        <div class="header-btns">
+            <button class="reset-btn" onclick="clearForm()" title="Reset Everything">🗑️</button>
+            <button class="theme-btn" onclick="toggleTheme()">🌓</button>
+        </div>
     </div>
 
     <!-- Step 1: Client Sync -->
@@ -148,6 +166,15 @@
         <button class="btn-outline" style="width: 100%; border-style: dashed; padding: 12px; margin-top: 10px; border-radius: 12px; cursor: pointer;" onclick="addItemRow()">
             + Add New Item to Cart
         </button>
+    </div>
+
+    <!-- GST Toggle -->
+    <div class="gst-toggle-card">
+        <span style="font-size: 13px; font-weight: 700; color: var(--text-soft);">APPLY GST (TAX)</span>
+        <label class="switch">
+            <input type="checkbox" id="gstEnabled" checked onchange="updateCalculations()">
+            <span class="slider"></span>
+        </label>
     </div>
 
     <!-- Step 3: Precise Breakdown -->
@@ -210,7 +237,6 @@
 
 <script>
     const UPI_ID = "tinu01jmp@okhdfcbank";
-    // Fixed Sheet API based on your working code
     const SHEET_API = "https://script.google.com/macros/s/AKfycbz7L7LsHuTui703d62Yt4PO4Wtw69a4ALM-eVJqJmalwYcygLgq6EPPS8kuwRQNh28dcQ/exec";
 
     const inventory = [
@@ -233,6 +259,24 @@
         const next = b.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
         b.setAttribute('data-theme', next);
         localStorage.setItem('gks_theme', next);
+    }
+
+    function clearForm() {
+        if(confirm("Are you sure you want to clear all fields?")) {
+            document.getElementById('itemsContainer').innerHTML = "";
+            document.getElementById('customer').value = "";
+            document.getElementById('mobile').value = "";
+            document.getElementById('discount').value = "0";
+            document.getElementById('paidAmount').value = "0";
+            document.getElementById('quickPayAmount').value = "";
+            document.getElementById('clientDetails').innerHTML = "";
+            document.getElementById('afterButtons').style.display = 'none';
+            document.getElementById('invoiceArea').style.display = 'none';
+            document.getElementById('quickQRContainer').innerHTML = "";
+            addItemRow();
+            localStorage.removeItem('gks_bill_draft');
+            showToast("Form cleared!");
+        }
     }
 
     function init() {
@@ -273,14 +317,18 @@
 
     function updateCalculations() {
         let subtotal = 0, totalTax = 0;
+        const applyGst = document.getElementById('gstEnabled').checked;
+
         document.querySelectorAll('.item-row').forEach(row => {
             const n = row.querySelector('.row-name').value;
             const q = parseFloat(row.querySelector('.row-qty').value) || 0;
             const r = parseFloat(row.querySelector('.row-rate').value) || 0;
             const lineAmt = q * r;
             subtotal += lineAmt;
-            const item = inventory.find(i => i.name === n);
-            if(item && item.gst > 0) totalTax += (lineAmt * item.gst) / 100;
+            if(applyGst) {
+                const item = inventory.find(i => i.name === n);
+                if(item && item.gst > 0) totalTax += (lineAmt * item.gst) / 100;
+            }
         });
 
         const disc = parseFloat(document.getElementById('discount').value) || 0;
@@ -314,41 +362,26 @@
         if (navigator.vibrate) navigator.vibrate(50);
     }
 
-    // FIXED FETCH CLIENT LOGIC
     async function fetchClient() {
         let rawPhone = document.getElementById('mobile').value.replace(/\D/g,"");
         if(rawPhone.length < 10) return showToast("Enter 10 digit number");
         let phone = "91" + rawPhone;
-        
         const btn = document.getElementById('fetchBtn');
         btn.innerText = "Syncing..."; btn.disabled = true;
 
         try {
-            const res = await fetch(SHEET_API, {
-                method: 'POST',
-                body: JSON.stringify({ action: "getClient", phone })
-            });
+            const res = await fetch(SHEET_API, { method: 'POST', body: JSON.stringify({ action: "getClient", phone }) });
             const data = await res.json();
             const div = document.getElementById('clientDetails');
-            
             if(data.found) {
-                div.innerHTML = `
-                <div style="background:var(--brand-soft); padding:15px; border-radius:14px; border:1px solid var(--brand); margin-bottom:15px;">
-                    <div style="font-weight:800; color:var(--brand);">${data.name}</div>
-                    <div style="font-size:11px; color:var(--text-soft);">PAST DUE: <span style="color:var(--danger); font-weight:800;">₹${data.totalDue}</span></div>
-                </div>`;
+                div.innerHTML = `<div style="background:var(--brand-soft); padding:15px; border-radius:14px; border:1px solid var(--brand); margin-bottom:15px;"><div style="font-weight:800; color:var(--brand);">${data.name}</div><div style="font-size:11px; color:var(--text-soft);">PAST DUE: <span style="color:var(--danger); font-weight:800;">₹${data.totalDue}</span></div></div>`;
                 document.getElementById('customer').value = data.name;
-                showToast("Data Synced!");
+                showToast("Data Fetched!");
             } else {
-                div.innerHTML = `<p style="font-size:11px; color:var(--text-soft); padding:10px;">New customer - no history found.</p>`;
-                showToast("New Customer Detected");
+                div.innerHTML = `<p style="font-size:11px; color:var(--text-soft); padding:10px;">New customer - no history.</p>`;
             }
-        } catch(e) { 
-            console.error(e);
-            showToast("Sync Error: Check Connection"); 
-        } finally { 
-            btn.innerText = "Sync Database"; btn.disabled = false; 
-        }
+        } catch(e) { showToast("Sync Error"); } 
+        finally { btn.innerText = "Sync Database"; btn.disabled = false; }
     }
 
     async function generateInvoice() {
@@ -379,11 +412,16 @@
                     <div style="text-align:right;"><b>Inv:</b> #${invNo}<br><b>Date:</b> ${new Date().toLocaleDateString()}</div>
                 </div>
                 <table class="inv-table"><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${rowsHtml}</tbody></table>
-                <div style="float:right; width:220px; font-size:12px;">
-                    <div style="display:flex; justify-content:space-between;"><span>Total:</span><span>₹${calc.finalNet.toFixed(2)}</span></div>
-                    <div style="display:flex; justify-content:space-between; border-top:1px solid #000; margin-top:5px; padding-top:5px;"><span>Paid:</span><span>₹${paid}</span></div>
-                    <div style="display:flex; justify-content:space-between; color:red; font-weight:800;"><span>Balance:</span><span>₹${balance.toFixed(2)}</span></div>
-                </div>
+                
+                <table class="inv-breakdown-table">
+                    <tr><td>Subtotal:</td><td style="text-align:right;">₹${calc.subtotal.toFixed(2)}</td></tr>
+                    <tr><td>Tax (GST):</td><td style="text-align:right;">₹${calc.totalTax.toFixed(2)}</td></tr>
+                    <tr><td>Discount:</td><td style="text-align:right;">-₹${calc.disc.toFixed(2)}</td></tr>
+                    <tr><td>Round-off:</td><td style="text-align:right;">₹${calc.roundOff}</td></tr>
+                    <tr class="grand-total"><td>TOTAL:</td><td style="text-align:right;">₹${calc.finalNet.toFixed(2)}</td></tr>
+                    <tr><td>Paid Amt:</td><td style="text-align:right;">₹${paid}</td></tr>
+                    <tr style="color:red; font-weight:800;"><td>Remaining:</td><td style="text-align:right;">₹${balance.toFixed(2)}</td></tr>
+                </table>
                 <div style="clear:both; text-align:center; margin-top:40px;"><div id="finalQR"></div><p style="font-size:10px; margin-top:10px;">Thank you! Build by Algum 2026</p></div>
             </div>`;
 
@@ -392,12 +430,11 @@
         document.getElementById('afterButtons').style.display = 'grid';
         area.scrollIntoView({ behavior: 'smooth' });
 
-        // AUTO-SAVE TO SHEET
         try {
             const phone = "91" + mobile.replace(/\D/g,"");
             await fetch(SHEET_API, { method:'POST', body:JSON.stringify({action:"addBill", phone, name:customer, amount:calc.finalNet}) });
             if(paid > 0) await fetch(SHEET_API, { method:'POST', body:JSON.stringify({action:"addPayment", phone, amount:paid, mode:document.getElementById('paymentMode').value}) });
-        } catch(e) { console.log("Cloud update skipped/error"); }
+        } catch(e) { }
     }
 
     function shareWhatsApp() {
