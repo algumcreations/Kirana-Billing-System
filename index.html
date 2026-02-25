@@ -531,6 +531,7 @@ function generateAdvanceQR(type){
   </div>`;
   
   new QRCode(document.getElementById("advanceQR"), advanceUpiLink);
+  if(navigator.vibrate){ navigator.vibrate(200); }
 }
 function shareAdvanceWhatsApp(amount,title){
   let mobile=document.getElementById("mobile").value.replace(/\D/g,"");
