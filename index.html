@@ -437,18 +437,26 @@ function removeRow(btn){
 }
 
 // --- UPDATE TOTAL ---
-function updateTotal(){
-  let total=0;
+  function updateTotal(){
+  let subtotal = 0;
+
   document.querySelectorAll(".itemRow").forEach(row=>{
-    let idx=row.querySelector(".serviceSelect").value;
-    let qty=parseFloat(row.querySelector(".qty").value)||1;
-    total+=services[idx].price*qty;
+    let idx = row.querySelector(".serviceSelect").value;
+    let qty = parseFloat(row.querySelector(".qty").value) || 1;
+    subtotal += services[idx].price * qty;
   });
-  document.getElementById("totalPreview").innerText="Total: ₹"+total.toFixed(2);
-}
-document.addEventListener("input", e=>{
-  if(e.target.classList.contains("qty") || e.target.classList.contains("serviceSelect")){
-    updateTotal();
+
+  let discount = parseFloat(document.getElementById("discount").value) || 0;
+  let total = subtotal - discount;
+
+  if(total < 0) total = 0; // safety
+
+  document.getElementById("totalPreview").innerText =
+    "Total: ₹" + total.toFixed(2);
+
+  // 🔥 Paid Amount auto fill
+  document.getElementById("paidAmount").value =
+    total.toFixed(2);
   }
 });
 
@@ -513,7 +521,6 @@ function generateAdvanceQR(type){
   }
 
   // Paid Amount box auto fill ho jaaye
-  document.getElementById("paidAmount").value = amount.toFixed(2);
 
   advanceUpiLink = `upi://pay?pa=${UPI_ID}&pn=Algum%20Creations&am=${amount.toFixed(2)}&cu=INR`;
 
@@ -640,9 +647,7 @@ function shareWhatsApp(){
   let message=`*ALGUM CREATIONS*\nInvoice Status: ${data.status}\nTotal: ₹${data.total}\n${data.status!=="PAID"?"Payment Link:\n"+billUpiLink+"\n":""}`;
   window.open(`https://wa.me/${mobile}?text=${encodeURIComponent(message)}`,"_blank");
 }
-  document.getElementById("discount").addEventListener("input", ()=>{
-    let fullQRBtn = document.querySelector("button[onclick=\"generateAdvanceQR('full')\"]");
-    if(fullQRBtn) fullQRBtn.click();
+ document.getElementById("discount").addEventListener("input", updateTotal);
 });
 </script>
 </body>
