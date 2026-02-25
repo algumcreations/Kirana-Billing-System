@@ -601,6 +601,7 @@ async function createBill(){
   }
 
   window.billData={customer,mobile,total,status};
+  if(navigator.vibrate){ navigator.vibrate(200); }
 
   // --- POST TO GOOGLE SHEET ---
   try{
