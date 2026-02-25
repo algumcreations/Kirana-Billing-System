@@ -2,16 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <!-- Viewport settings to prevent mobile auto-zoom on input focus -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>Algum Creations | Professional Billing SaaS 2026</title>
+    <title>GKS Enterprise | Professional Billing 2026</title>
 
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
         :root {
             --brand: #6366f1;
@@ -19,430 +18,545 @@
             --success: #10b981;
             --danger: #f43f5e;
             --warning: #f59e0b;
-            --dark: #0f172a;
-            --light: #f8fafc;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #0f172a;
+            --text-soft: #64748b;
             --border: #e2e8f0;
             --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
 
-        * { box-sizing: border-box; transition: all 0.2s ease; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body {
-            background-color: var(--light);
-            color: var(--dark);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
+        [data-theme="dark"] {
+            --bg: #020617;
+            --card: #0f172a;
+            --text: #f8fafc;
+            --text-soft: #94a3b8;
+            --border: #1e293b;
+            --brand-soft: rgba(99, 102, 241, 0.1);
         }
+
+        * { box-sizing: border-box; transition: all 0.2s ease; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { background-color: var(--bg); color: var(--text); margin: 0; padding: 15px; display: flex; justify-content: center; min-height: 100vh; }
 
         .app-container {
-            width: 100%;
-            max-width: 850px;
-            background: white;
-            border-radius: 24px;
-            box-shadow: var(--shadow);
-            padding: 30px;
-            border: 1px solid var(--border);
+            width: 100%; max-width: 850px; background: var(--card); border-radius: 24px;
+            box-shadow: var(--shadow); padding: 25px; border: 1px solid var(--border);
+            position: relative;
         }
 
-        .header { text-align: center; margin-bottom: 30px; }
-        .header h1 { margin: 0; font-size: 28px; font-weight: 800; color: var(--brand); letter-spacing: -0.5px; }
-        .header p { margin: 5px 0 0; color: #64748b; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        /* Header section */
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
+        .header h1 { margin: 0; font-size: 26px; font-weight: 800; color: var(--brand); letter-spacing: -0.5px; }
+        .header p { margin: 2px 0 0; color: var(--text-soft); font-size: 11px; text-transform: uppercase; font-weight: 700; }
 
-        .icon-svg { width: 18px; height: 18px; fill: currentColor; }
+        .theme-btn { 
+            background: var(--brand-soft); border: none; width: 42px; height: 42px; 
+            border-radius: 12px; cursor: pointer; color: var(--brand); font-size: 18px;
+        }
 
-        /* Form Controls */
+        /* Form styling */
+        .section-label { font-size: 11px; font-weight: 800; color: var(--brand); text-transform: uppercase; margin: 20px 0 10px; display: block; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .input-group { display: flex; flex-direction: column; gap: 6px; }
-        label { font-size: 12px; font-weight: 700; color: #475569; text-transform: uppercase; }
+        label { font-size: 11px; font-weight: 700; color: var(--text-soft); text-transform: uppercase; }
         
-        /* Font-size 16px prevents mobile browsers from zooming in on focus */
         input, select {
-            padding: 12px;
-            border-radius: 10px;
-            border: 1.5px solid var(--border);
-            font-size: 16px; 
-            outline: none;
-            background: #fff;
-            width: 100%;
+            padding: 12px; border-radius: 12px; border: 1.5px solid var(--border);
+            font-size: 16px; outline: none; background: var(--card); color: var(--text); width: 100%;
         }
         input:focus { border-color: var(--brand); box-shadow: 0 0 0 4px var(--brand-soft); }
 
-        /* Buttons */
-        .btn {
-            display: inline-flex; align-items: center; justify-content: center;
-            gap: 8px; padding: 12px 20px; border-radius: 10px;
-            font-weight: 700; font-size: 14px; cursor: pointer; border: none;
+        /* Custom Mobile Input with Prefix */
+        .mobile-input-wrapper {
+            display: flex; align-items: center; border: 1.5px solid var(--border); border-radius: 12px; background: var(--card); overflow: hidden;
         }
-        .btn-brand { background: var(--brand); color: white; width: 100%; }
-        .btn-outline { background: white; border: 1.5px solid var(--border); color: var(--dark); width: 100%; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-danger { background: #fee2e2; color: var(--danger); width: 42px; height: 42px; padding: 0; }
-
-        /* Client Card */
-        #clientDetails { margin-bottom: 20px; }
-        .client-profile {
-            background: var(--brand-soft);
-            padding: 15px;
-            border-radius: 16px;
-            border: 1px solid #c7d2fe;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            animation: slideIn 0.3s ease-out;
+        .mobile-prefix {
+            background: var(--brand-soft); color: var(--brand); font-weight: 800; padding: 12px; border-right: 1.5px solid var(--border);
         }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .mobile-input-wrapper input { border: none; border-radius: 0; }
 
-        /* Item Management */
-        .item-list { margin-top: 25px; border-top: 1px solid var(--border); padding-top: 20px; }
-        .item-row { display: grid; grid-template-columns: 3fr 1fr 42px; gap: 10px; margin-bottom: 10px; align-items: center; }
+        /* Sync button */
+        .btn-sync { background: var(--brand); color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; height: 48px; width: 100%; }
+        .btn-sync:disabled { opacity: 0.6; }
 
-        .total-summary { text-align: right; margin: 20px 0; padding: 15px; background: var(--light); border-radius: 12px; }
-        .total-summary h2 { margin: 0; color: var(--brand); font-size: 26px; font-weight: 800; }
+        /* Cart/Items styling */
+        .item-list { margin-top: 15px; border-top: 1px dashed var(--border); padding-top: 15px; }
+        .item-row { display: grid; grid-template-columns: 2.5fr 0.8fr 0.8fr 42px; gap: 10px; margin-bottom: 12px; align-items: center; }
+        .btn-remove { background: #fee2e2; color: var(--danger); border: none; height: 42px; border-radius: 10px; cursor: pointer; font-weight: 800; font-size: 18px; }
 
-        /* Professional Invoice UI */
-        .invoice-outer { margin-top: 40px; overflow-x: auto; display: none; padding-bottom: 20px; }
+        /* Price Breakdown Panel */
+        .breakdown-card {
+            background: var(--brand-soft); border-radius: 20px; padding: 20px; 
+            margin: 25px 0; border: 1px solid var(--brand);
+        }
+        .breakdown-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .total-row { border-top: 1px solid var(--brand); margin-top: 10px; padding-top: 10px; font-weight: 800; font-size: 24px; color: var(--brand); }
+
+        /* Quick Pay Section - BIG INPUT */
+        .quick-pay-section {
+            background: var(--bg); border: 2px dashed var(--brand);
+            padding: 20px; border-radius: 18px; margin: 25px 0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+        }
+        #quickPayAmount {
+            font-size: 28px; font-weight: 800; text-align: center; 
+            color: var(--brand); border: 2px solid var(--brand);
+            height: 70px; margin-bottom: 15px;
+        }
+
+        /* Invoice Preview */
+        .invoice-outer { margin-top: 30px; display: none; overflow-x: auto; }
         .invoice-card {
-            width: 750px; margin: 0 auto; background: white; padding: 40px;
-            border-radius: 20px; border: 1px solid #f1f5f9; position: relative;
+            width: 750px; margin: 0 auto; background: white; padding: 45px;
+            color: #000; position: relative; border: 1px solid #ddd;
         }
-        .invoice-header { text-align: center; margin-bottom: 30px; }
-        .invoice-header h2 { color: var(--brand); margin: 0; font-size: 26px; text-transform: uppercase; }
-        
-        .badge { position: absolute; top: 30px; right: 30px; padding: 6px 16px; border-radius: 20px; font-size: 11px; font-weight: 800; color: white; }
-        
-        .invoice-table { width: 100%; border-collapse: collapse; margin: 25px 0; }
-        .invoice-table th { background: var(--brand); color: white; text-align: left; padding: 12px; font-size: 13px; }
-        .invoice-table td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 14px; }
-        .invoice-table tr:nth-child(even) { background: #f8fafc; }
+        .inv-badge { position: absolute; top: 40px; right: 45px; background: #000; color: #fff; padding: 4px 12px; font-size: 10px; font-weight: 900; }
+        .inv-table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+        .inv-table th { border-bottom: 2px solid #000; text-align: left; padding: 10px; font-size: 12px; }
+        .inv-table td { padding: 10px; border-bottom: 1px solid #eee; font-size: 13px; }
 
-        .summary-box { background: #f8fafc; border-radius: 16px; padding: 20px; float: right; width: 280px; text-align: right; }
-        .summary-row { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 14px; }
-        .grand-total { font-size: 18px; font-weight: 800; border-top: 1px solid #e2e8f0; margin-top: 10px; padding-top: 10px; color: var(--dark); }
+        /* Action Buttons */
+        .btn-action { padding: 15px; border-radius: 14px; border: none; font-weight: 800; font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-main { background: var(--brand); color: white; width: 100%; margin-top: 10px; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-outline { background: var(--card); border: 1.5px solid var(--border); color: var(--text); }
 
-        .qr-area { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px dashed var(--border); clear: both; }
-
-        /* Actions */
-        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
+        #toast {
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+            background: #000; color: #fff; padding: 10px 20px; border-radius: 30px;
+            font-size: 13px; display: none; z-index: 9999;
+        }
 
         @media (max-width: 600px) {
-            .app-container { padding: 20px; border-radius: 0; }
             .grid { grid-template-columns: 1fr; }
-            .item-row { grid-template-columns: 1fr; border: 1px solid var(--border); padding: 12px; border-radius: 15px; }
-            .btn-danger { width: 100%; }
+            .item-row { grid-template-columns: 1fr 1.5fr 42px; gap: 8px; }
+            .item-row input:first-child { grid-column: span 3; }
         }
     </style>
 </head>
-<body>
+<body data-theme="light">
+
+<div id="toast"></div>
 
 <div class="app-container">
     <div class="header">
-        <h1>Gupta Kirana Store</h1>
-        <p>Premium SaaS Billing Ecosystem 2026</p>
+        <div>
+            <h1>Gupta Kirana Store</h1>
+            <p>Digital Billing SaaS 2026</p>
+        </div>
+        <button class="theme-btn" onclick="toggleTheme()">🌓</button>
     </div>
 
-    <!-- 1. Client Sync -->
+    <!-- Step 1: Client Sync -->
+    <span class="section-label">Customer Profile</span>
     <div class="grid">
         <div class="input-group">
             <label>Customer Mobile</label>
-            <input type="tel" id="mobile" value="+91" placeholder="91XXXXXXXXXX">
+            <div class="mobile-input-wrapper">
+                <span class="mobile-prefix">+91</span>
+                <input type="tel" id="mobile" placeholder="XXXXXXXXXX" maxlength="10">
+            </div>
         </div>
         <div style="display: flex; align-items: flex-end;">
-            <button class="btn btn-outline" onclick="fetchClient()" id="fetchBtn">
-                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>
+            <button class="btn-sync" onclick="fetchClient()" id="fetchBtn">
                 Sync Database
             </button>
         </div>
     </div>
     <div id="clientDetails"></div>
 
-    <div class="input-group">
-        <label>Customer Name</label>
-        <input type="text" id="customer" placeholder="Full Name">
+    <div class="grid" style="grid-template-columns: 2fr 1fr;">
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" id="customer" placeholder="Enter name">
+        </div>
+        <div class="input-group">
+            <label>Bill Date</label>
+            <input type="date" id="billDate">
+        </div>
     </div>
 
-    <!-- 2. Inventory Management -->
+    <!-- Step 2: Cart Management -->
+    <span class="section-label">Inventory & Cart</span>
     <div class="item-list">
-        <label style="margin-bottom: 10px; display: block;">Items Inventory</label>
         <div id="itemsContainer"></div>
-        <button class="btn btn-outline" onclick="addItemRow()" style="border-style: dashed; margin-top: 10px;">
-            <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>
-            Add New Item Row
+        <button class="btn-outline" style="width: 100%; border-style: dashed; padding: 12px; margin-top: 10px; border-radius: 12px; cursor: pointer;" onclick="addItemRow()">
+            + Add New Item to Cart
         </button>
     </div>
 
-    <div class="total-summary">
-        <p style="font-size: 11px; color: #64748b; margin: 0; text-transform: uppercase;">Estimated Payable</p>
-        <h2 id="grandTotalText">₹0.00</h2>
+    <!-- Step 3: Precise Breakdown -->
+    <div class="breakdown-card">
+        <div class="breakdown-row"><span>Subtotal (Net Amount):</span><span id="txtSubtotal">₹0.00</span></div>
+        <div class="breakdown-row"><span>Total GST (Tax):</span><span id="txtTax">₹0.00</span></div>
+        <div class="breakdown-row"><span>Discount Applied:</span><span id="txtDiscount">-₹0.00</span></div>
+        <div class="breakdown-row"><span>Cash Round-off:</span><span id="txtRound">₹0.00</span></div>
+        <div class="total-row breakdown-row">
+            <span>FINAL TOTAL</span>
+            <span id="txtGrandTotal">₹0.00</span>
+        </div>
     </div>
 
-    <!-- 3. Financials -->
-    <div class="grid">
+    <!-- Step 4: Pay Part / Udhaar Logic (Enhanced Big Input) -->
+    <div class="quick-pay-section">
+        <label style="color: var(--brand); font-weight: 800; display: block; margin-bottom: 10px;">Quick Pay / Part Amount Entry</label>
+        <div style="display: flex; flex-direction: column;">
+            <input type="number" id="quickPayAmount" placeholder="Enter Part Amount" oninput="updateCalculations()">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <button class="btn-action btn-success" onclick="generateQuickQR('part')">Pay Part</button>
+                <button class="btn-action btn-main" style="margin:0;" onclick="generateQuickQR('full')">Full Pay</button>
+            </div>
+        </div>
+        <div id="quickQRContainer" style="text-align: center; margin-top: 20px;"></div>
+    </div>
+
+    <!-- Step 5: Final Finance -->
+    <span class="section-label">Payment Authorization</span>
+    <div class="grid" style="grid-template-columns: 1fr 1fr 1fr;">
         <div class="input-group">
             <label>Discount (₹)</label>
-            <input type="number" id="discount" value="0" oninput="updateCalculations(true)">
+            <input type="number" id="discount" value="0" oninput="updateCalculations()">
         </div>
         <div class="input-group">
-            <label>Paid Amount (₹)</label>
-            <input type="number" id="paidAmount" value="0">
+            <label>Paid Amt (₹)</label>
+            <input type="number" id="paidAmount" value="0" oninput="updateCalculations()">
         </div>
-    </div>
-
-    <div class="grid">
         <div class="input-group">
-            <label>Payment Mode</label>
+            <label>Method</label>
             <select id="paymentMode">
-                <option value="Online">Online / UPI</option>
-                <option value="Cash">Cash Liquidity</option>
+                <option value="Online">UPI / Online</option>
+                <option value="Cash">Cash</option>
             </select>
         </div>
-        <div style="display: flex; align-items: flex-end;">
-            <button class="btn btn-brand" onclick="generateInvoice()">
-                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke="currentColor" stroke-width="2.5" fill="none"/></svg>
-                Authorize & Generate
-            </button>
-        </div>
     </div>
 
-    <!-- 4. Quick Pay Section -->
-    <div style="margin-top: 25px; background: #f1f5f9; padding: 20px; border-radius: 16px;">
-        <label>Quick Payment QR Generator</label>
-        <div style="display: flex; gap: 8px; margin-top: 8px;">
-            <input type="number" id="quickPayAmount" placeholder="Amt" style="flex: 2; margin-bottom: 0;">
-            <button class="btn btn-warning" onclick="generateQuickQR('advance')">Pay Part</button>
-            <button class="btn btn-success" onclick="generateQuickQR('full')">Pay Full</button>
-        </div>
-        <div id="quickQRContainer" style="text-align:center; margin-top: 15px;"></div>
+    <button class="btn-action btn-main" onclick="generateInvoice()">
+        Authorize & Generate Final Bill
+    </button>
+
+    <!-- Post Generation Buttons -->
+    <div id="afterButtons" style="display: none; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px;">
+        <button class="btn-action btn-success" onclick="shareWhatsApp()">Share WhatsApp</button>
+        <button class="btn-action btn-outline" onclick="downloadInvoice()">Save PNG Image</button>
     </div>
 
-    <!-- Invoice Preview -->
+    <!-- Hidden Invoice for Generation -->
     <div id="invoiceArea" class="invoice-outer"></div>
 
-    <!-- Final Actions -->
-    <div id="afterButtons" class="action-grid" style="display: none;">
-        <button class="btn btn-brand" style="background: #0ea5e9;" onclick="downloadInvoice()">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-            Download PNG
-        </button>
-        <button class="btn btn-success" onclick="shareWhatsApp()">
-            <svg class="icon-svg" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
-            WhatsApp Bill
-        </button>
-        <button class="btn btn-outline" style="grid-column: span 2;" onclick="window.print()">Print Receipt</button>
-    </div>
+    <datalist id="itemsData"></datalist>
 </div>
 
 <script>
     const UPI_ID = "tinu01jmp@okhdfcbank";
     const SHEET_API = "https://script.google.com/macros/s/AKfycbz7L7LsHuTui703d62Yt4PO4Wtw69a4ALM-eVJqJmalwYcygLgq6EPPS8kuwRQNh28dcQ/exec";
 
-    const services = [
-        {name:"Rice (Basmati) 1kg",price:120}, {name:"Rice (Regular) 1kg",price:55},
-        {name:"Wheat Flour (Atta) 1kg",price:45}, {name:"Maida 1kg",price:50},
-        {name:"Besan 1kg",price:80}, {name:"Toor Dal 1kg",price:140},
-        {name:"Sugar 1kg",price:45}, {name:"Salt 1kg",price:20},
-        {name:"Mustard Oil 1L",price:170}, {name:"Ghee 1L",price:600},
-        {name:"Tea 250g",price:140}, {name:"Maggi Noodles",price:14},
-        {name:"Soap (Bath)",price:35}, {name:"Toothpaste 100g",price:55},
-        {name:"Biscuits",price:10}, {name:"Coffee 100g",price:120},
-        {name:"Masoor Dal 1kg",price:110}, {name:"Chilli Sauce 200g",price:65}
+    // Detailed inventory with GST percentages
+    const inventory = [
+        {name:"Rice (Basmati) 1kg", price:120, gst:5}, {name:"Rice (Regular) 1kg", price:55, gst:5},
+        {name:"Wheat Flour (Atta) 1kg", price:45, gst:0}, {name:"Maida 1kg", price:50, gst:12},
+        {name:"Besan 1kg", price:85, gst:5}, {name:"Sugar 1kg", price:46, gst:12},
+        {name:"Salt (Tata) 1kg", price:28, gst:0}, {name:"Mustard Oil 1L", price:175, gst:18},
+        {name:"Ghee 1L", price:680, gst:12}, {name:"Toor Dal 1kg", price:145, gst:5},
+        {name:"Tea (Tata) 250g", price:140, gst:5}, {name:"Maggi Noodles", price:14, gst:12},
+        {name:"Lux Soap 100g", price:35, gst:18}, {name:"Colgate 100g", price:60, gst:18},
+        {name:"Surf Excel 500g", price:75, gst:18}, {name:"Parle-G", price:10, gst:12}
     ];
 
-    // --- DB SYNC (FETCH HISTORY) ---
-    async function fetchClient() {
-        const phoneRaw = document.getElementById("mobile").value.replace(/\D/g, "");
-        const phone = phoneRaw.length === 10 ? "91" + phoneRaw : phoneRaw;
-        if (phone.length < 10) { alert("Invalid Mobile Number."); return; }
+    function showToast(m) {
+        const t = document.getElementById('toast');
+        t.innerText = m; t.style.display = 'block';
+        setTimeout(() => t.style.display = 'none', 2500);
+    }
 
-        const btn = document.getElementById("fetchBtn");
-        btn.innerHTML = "Syncing..."; btn.disabled = true;
+    function toggleTheme() {
+        const b = document.body;
+        const cur = b.getAttribute('data-theme');
+        const next = cur === 'light' ? 'dark' : 'light';
+        b.setAttribute('data-theme', next);
+        localStorage.setItem('gks_theme', next);
+    }
+
+    function init() {
+        const savedTheme = localStorage.getItem('gks_theme') || 'light';
+        document.body.setAttribute('data-theme', savedTheme);
+        document.getElementById('billDate').valueAsDate = new Date();
+        
+        const dl = document.getElementById('itemsData');
+        inventory.sort((a,b) => a.name.localeCompare(b.name)).forEach(item => {
+            const opt = document.createElement('option');
+            opt.value = item.name;
+            dl.appendChild(opt);
+        });
+
+        if(!loadDraft()) addItemRow();
+    }
+
+    function addItemRow(data = {name: "", qty: 1, rate: 0}) {
+        const container = document.getElementById('itemsContainer');
+        const row = document.createElement('div');
+        row.className = 'item-row';
+        row.innerHTML = `
+            <input type="text" list="itemsData" class="row-name" value="${data.name}" placeholder="Item Name..." oninput="handleAuto(this)">
+            <input type="number" class="row-qty" value="${data.qty}" step="0.1" oninput="updateCalculations()">
+            <input type="number" class="row-rate" value="${data.rate}" placeholder="Rate" oninput="updateCalculations()">
+            <button class="btn-remove" onclick="this.parentElement.remove(); updateCalculations();">×</button>
+        `;
+        container.appendChild(row);
+        updateCalculations();
+    }
+
+    function handleAuto(input) {
+        const val = input.value;
+        const match = inventory.find(i => i.name === val);
+        if(match) {
+            const row = input.parentElement;
+            row.querySelector('.row-rate').value = match.price;
+            updateCalculations();
+            if (navigator.vibrate) navigator.vibrate(10);
+        }
+        saveDraft();
+    }
+
+    function updateCalculations() {
+        let subtotal = 0;
+        let totalTax = 0;
+
+        document.querySelectorAll('.item-row').forEach(row => {
+            const name = row.querySelector('.row-name').value;
+            const qty = parseFloat(row.querySelector('.row-qty').value) || 0;
+            const rate = parseFloat(row.querySelector('.row-rate').value) || 0;
+            
+            const lineAmt = qty * rate;
+            subtotal += lineAmt;
+
+            const itemMatch = inventory.find(i => i.name === name);
+            if(itemMatch && itemMatch.gst > 0) {
+                totalTax += (lineAmt * itemMatch.gst) / 100;
+            }
+        });
+
+        const discount = parseFloat(document.getElementById('discount').value) || 0;
+        const rawNet = subtotal + totalTax - discount;
+        const finalNet = Math.round(rawNet);
+        const roundOff = (finalNet - rawNet).toFixed(2);
+
+        document.getElementById('txtSubtotal').innerText = `₹${subtotal.toFixed(2)}`;
+        document.getElementById('txtTax').innerText = `₹${totalTax.toFixed(2)}`;
+        document.getElementById('txtDiscount').innerText = `-₹${discount.toFixed(2)}`;
+        document.getElementById('txtRound').innerText = `₹${roundOff}`;
+        document.getElementById('txtGrandTotal').innerText = `₹${finalNet.toFixed(2)}`;
+
+        // Special logic: If typing in Quick Pay, sync it to Paid Amount
+        if(document.activeElement.id === 'quickPayAmount') {
+            document.getElementById('paidAmount').value = document.getElementById('quickPayAmount').value;
+        }
+
+        saveDraft();
+        return { subtotal, totalTax, discount, finalNet, roundOff };
+    }
+
+    function generateQuickQR(type) {
+        const calc = updateCalculations();
+        let amt = 0;
+        if(type === 'full') {
+            amt = calc.finalNet;
+            document.getElementById('quickPayAmount').value = amt;
+        } else {
+            amt = parseFloat(document.getElementById('quickPayAmount').value) || 0;
+        }
+
+        if(amt < 0) { showToast("Invalid amount"); return; }
+        
+        // Final sync
+        document.getElementById('paidAmount').value = amt;
+        
+        const upi = `upi://pay?pa=${UPI_ID}&pn=GuptaKirana&am=${amt.toFixed(2)}&cu=INR`;
+        const cont = document.getElementById('quickQRContainer');
+        cont.innerHTML = `<p style="font-size:12px; font-weight:800; margin-bottom:10px;">Payment QR for ₹${amt}</p><div id="qQR" style="display:inline-block; padding:10px; background:white; border-radius:12px; border:2px solid var(--brand);"></div>`;
+        new QRCode(document.getElementById('qQR'), { text: upi, width: 140, height: 140 });
+        
+        if (navigator.vibrate) navigator.vibrate(50);
+        showToast("Paid Amount Updated");
+    }
+
+    async function fetchClient() {
+        const phone = document.getElementById('mobile').value;
+        if(phone.length < 10) { showToast("Enter 10 digit number"); return; }
+        const btn = document.getElementById('fetchBtn');
+        btn.innerText = "Syncing..."; btn.disabled = true;
 
         try {
             const res = await fetch(SHEET_API, { method: 'POST', body: JSON.stringify({ action: "getClient", phone }) });
             const data = await res.json();
-            const detailDiv = document.getElementById("clientDetails");
+            const div = document.getElementById('clientDetails');
             
-            if (data.found) {
-                detailDiv.innerHTML = `
-                <div class="client-profile">
-                    <div style="background: var(--brand); color: white; padding: 10px; border-radius: 50%;">
-                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke="currentColor" stroke-width="2" fill="none"/></svg>
-                    </div>
-                    <div>
-                        <p style="margin:0; font-weight:800; color:var(--brand); font-size:15px;">Customer: ${data.name}</p>
-                        <p style="margin:2px 0; font-size:12px; color:#475569;">History: ₹${data.totalBill} | Unpaid: <span style="color:red; font-weight:700;">₹${data.totalDue}</span></p>
-                    </div>
+            if(data.found) {
+                div.innerHTML = `
+                <div style="background:var(--brand-soft); padding:15px; border-radius:14px; border:1px solid var(--brand); margin-bottom:15px;">
+                    <div style="font-weight:800; color:var(--brand);">${data.name}</div>
+                    <div style="font-size:11px; color:var(--text-soft);">PAST UDHAAR (DUE): <span style="color:var(--danger); font-weight:800;">₹${data.totalDue}</span></div>
                 </div>`;
-                document.getElementById("customer").value = data.name;
+                document.getElementById('customer').value = data.name;
+                showToast("History synced!");
             } else {
-                detailDiv.innerHTML = `<div class="client-profile" style="background:#f1f5f9; border-color:#e2e8f0;"><p style="margin:0; font-size:13px; color:#64748b;">New Record Created on Authorization.</p></div>`;
+                div.innerHTML = `<p style="font-size:11px; color:var(--text-soft);">New customer - will be added to database.</p>`;
             }
-        } catch (e) { console.error(e); }
-        finally { btn.innerHTML = "Sync Database"; btn.disabled = false; }
+        } catch(e) { showToast("Sync error"); }
+        finally { btn.innerText = "Sync Database"; btn.disabled = false; }
     }
 
-    // --- ITEM MANAGEMENT ---
-    function addItemRow() {
-        const div = document.createElement("div");
-        div.className = "item-row";
-        const options = services.sort((a,b) => a.name.localeCompare(b.name)).map((s) => {
-            const idx = services.findIndex(x => x.name === s.name);
-            return `<option value="${idx}">${s.name} - ₹${s.price}</option>`;
-        }).join("");
-
-        div.innerHTML = `
-            <select class="sel-item" onchange="updateCalculations(true)">${options}</select>
-            <input type="number" class="sel-qty" value="1" min="0.1" step="0.1" oninput="updateCalculations(true)">
-            <div class="remove-row-btn" onclick="this.parentElement.remove(); updateCalculations(true);">
-                <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-            </div>
-        `;
-        document.getElementById("itemsContainer").appendChild(div);
-        updateCalculations(true);
-    }
-
-    function updateCalculations(resetPaid = false) {
-        let sub = 0;
-        document.querySelectorAll(".item-row").forEach(row => {
-            const idx = row.querySelector(".sel-item").value;
-            const qty = parseFloat(row.querySelector(".sel-qty").value) || 0;
-            sub += services[idx].price * qty;
-        });
-        const disc = parseFloat(document.getElementById("discount").value) || 0;
-        const net = Math.max(0, sub - disc);
-        
-        document.getElementById("grandTotalText").innerText = `₹${net.toFixed(2)}`;
-        
-        // Only reset paidAmount to full if explicitly asked (e.g., when items change)
-        if (resetPaid) {
-            document.getElementById("paidAmount").value = net.toFixed(2);
-        }
-        
-        return { sub, disc, net };
-    }
-
-    // --- QUICK QR FEATURE ---
-    function generateQuickQR(type) {
-        const { net } = updateCalculations(false);
-        let amt = 0;
-        
-        if (type === 'full') {
-            amt = net;
-        } else {
-            amt = parseFloat(document.getElementById("quickPayAmount").value) || 0;
-        }
-        
-        if (amt <= 0) { alert("Enter valid amount"); return; }
-        if (amt > net) { alert("Amount exceeds total bill"); return; }
-
-        // UPDATE THE PAID AMOUNT IN MAIN FORM
-        document.getElementById("paidAmount").value = amt.toFixed(2);
-        
-        const upi = `upi://pay?pa=${UPI_ID}&pn=GuptaKirana&am=${amt.toFixed(2)}&cu=INR`;
-        const container = document.getElementById("quickQRContainer");
-        container.innerHTML = `<p style="font-weight:700; margin-bottom:10px;">Pay Part: ₹${amt.toFixed(2)}</p><div id="qQR"></div>`;
-        new QRCode(document.getElementById("qQR"), { text: upi, width: 140, height: 140 });
-        
-        if (navigator.vibrate) navigator.vibrate(100);
-    }
-
-    // --- FINAL INVOICE (PRO UI) ---
     async function generateInvoice() {
-        const { sub, disc, net } = updateCalculations(false);
-        const paid = parseFloat(document.getElementById("paidAmount").value) || 0;
-        const bal = net - paid;
-        const status = bal <= 0 ? "PAID" : (paid > 0 ? "PARTIAL" : "DUE");
+        const calc = updateCalculations();
+        const paid = parseFloat(document.getElementById('paidAmount').value) || 0;
+        const balance = calc.finalNet - paid;
+        const status = balance <= 0 ? "PAID" : "UDHAAR / DUE";
         const invNo = "GKS-" + Date.now().toString().slice(-6);
 
         let rowsHtml = "";
-        document.querySelectorAll(".item-row").forEach(row => {
-            const item = services[row.querySelector(".sel-item").value];
-            const qty = row.querySelector(".sel-qty").value;
-            rowsHtml += `<tr><td>${item.name}</td><td>${qty}</td><td>₹${item.price}</td><td>₹${(item.price * qty).toFixed(2)}</td></tr>`;
+        document.querySelectorAll('.item-row').forEach(row => {
+            const n = row.querySelector('.row-name').value;
+            const q = row.querySelector('.row-qty').value;
+            const r = row.querySelector('.row-rate').value;
+            if(n) rowsHtml += `<tr><td>${n}</td><td>${q}</td><td>${r}</td><td>${(q*r).toFixed(2)}</td></tr>`;
         });
 
-        const area = document.getElementById("invoiceArea");
-        area.style.display = "block";
+        const area = document.getElementById('invoiceArea');
+        area.style.display = 'block';
         area.innerHTML = `
             <div id="captureNode" class="invoice-card">
-                <div class="badge" style="background:${status==='PAID'?'#10b981':status==='PARTIAL'?'#f59e0b':'#f43f5e'}">${status}</div>
-                <div class="invoice-header">
-                    <h2>GUPTA KIRANA STORE</h2>
-                    <p style="font-size:11px; color:#64748b; margin-top:5px;">Digital Billing Ecosystem | Jamalpur, Bihar</p>
+                <div class="inv-badge">${status}</div>
+                <div style="text-align:center; margin-bottom:30px;">
+                    <h2 style="margin:0; font-size:26px;">GUPTA KIRANA STORE</h2>
+                    <p style="font-size:10px; margin:4px 0;">Jamalpur, Bihar | Digital Tax Receipt</p>
                 </div>
-                <hr style="border:0; border-top:1px solid #f1f5f9; margin:20px 0;">
                 <div style="display:flex; justify-content:space-between; font-size:12px; margin-bottom:20px;">
-                    <div><strong>Bill To:</strong> ${document.getElementById("customer").value}<br><strong>Ph:</strong> ${document.getElementById("mobile").value}</div>
-                    <div style="text-align:right;"><strong>Invoice:</strong> ${invNo}<br><strong>Date:</strong> ${new Date().toLocaleDateString()}</div>
+                    <div><b>Billed To:</b> ${document.getElementById('customer').value}<br><b>Ph:</b> +91 ${document.getElementById('mobile').value}</div>
+                    <div style="text-align:right;"><b>Inv:</b> #${invNo}<br><b>Date:</b> ${new Date().toLocaleDateString()}</div>
                 </div>
-                <table class="invoice-table"><thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead><tbody>${rowsHtml}</tbody></table>
-                <div class="summary-box">
-                    <div class="summary-row"><span>Subtotal:</span><span>₹${sub.toFixed(2)}</span></div>
-                    <div class="summary-row"><span>Discount:</span><span>-₹${disc.toFixed(2)}</span></div>
-                    <div class="grand-total"><div class="summary-row"><strong>Grand Total:</strong><strong>₹${net.toFixed(2)}</strong></div></div>
-                    <div class="summary-row" style="margin-top:5px;"><span>Paid (${document.getElementById("paymentMode").value}):</span><span>₹${paid.toFixed(2)}</span></div>
-                    <div class="summary-row" style="color:red; font-weight:800;"><span>Remaining Balance:</span><span>₹${bal.toFixed(2)}</span></div>
+                <table class="inv-table">
+                    <thead><tr><th>Description</th><th>Qty</th><th>Rate</th><th>Total</th></tr></thead>
+                    <tbody>${rowsHtml}</tbody>
+                </table>
+                <div style="float:right; width:220px; font-size:12px;">
+                    <div style="display:flex; justify-content:space-between;"><span>Subtotal:</span><span>₹${calc.subtotal.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Tax (GST):</span><span>₹${calc.totalTax.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Discount:</span><span>-₹${calc.discount.toFixed(2)}</span></div>
+                    <div style="display:flex; justify-content:space-between;"><span>Round-off:</span><span>₹${calc.roundOff}</span></div>
+                    <div style="display:flex; justify-content:space-between; font-weight:900; font-size:18px; border-top:2px solid #000; margin-top:8px; padding-top:8px;">
+                        <span>TOTAL:</span><span>₹${calc.finalNet.toFixed(2)}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; margin-top:8px;"><span>Paid Amt:</span><span>₹${paid}</span></div>
+                    <div style="display:flex; justify-content:space-between; color:red; font-weight:800;"><span>Remaining:</span><span>₹${balance}</span></div>
                 </div>
-                ${bal > 0 ? `<div class="qr-area"><p style="font-size:11px; margin-bottom:10px;">Scan to settle remaining ₹${bal.toFixed(2)}</p><div id="fQR"></div></div>` : ""}
+                <div style="clear:both; text-align:center; margin-top:40px; padding-top:20px; border-top:1px solid #eee;">
+                    <div id="finalQR" style="display:inline-block;"></div>
+                    <p id="qrText" style="font-size:10px; margin-top:10px; font-weight:700;"></p>
+                    <p style="font-size:10px; margin-top:5px;">Thank you for shopping! Build by Algum 2026</p>
+                </div>
             </div>`;
 
-        document.getElementById("afterButtons").style.display = "grid";
-        if (bal > 0) new QRCode(document.getElementById("fQR"), { text: `upi://pay?pa=${UPI_ID}&pn=GuptaKirana&am=${bal.toFixed(2)}&cu=INR`, width: 120, height: 120 });
-        
-        area.scrollIntoView({ behavior: 'smooth' });
+        if(balance > 0) {
+            document.getElementById('qrText').innerText = `Scan to pay Balance: ₹${balance}`;
+            new QRCode(document.getElementById('finalQR'), { 
+                text: `upi://pay?pa=${UPI_ID}&pn=GuptaKirana&am=${balance.toFixed(2)}&cu=INR`, 
+                width: 100, height: 100 
+            });
+        } else {
+            document.getElementById('qrText').innerText = "FULL PAYMENT DONE. THANK YOU!";
+            document.getElementById('finalQR').innerHTML = "✅";
+            document.getElementById('finalQR').style.fontSize = "40px";
+        }
 
-        // Post to Sheet
-        try {
-            fetch(SHEET_API, { method: 'POST', body: JSON.stringify({ action: "addBill", phone: document.getElementById("mobile").value.replace(/\D/g,""), name: document.getElementById("customer").value, amount: net }) });
-        } catch(e) {}
+        document.getElementById('afterButtons').style.display = 'grid';
+        area.scrollIntoView({ behavior: 'smooth' });
     }
 
-    // --- WHATSAPP DETAILED MESSAGE ---
     function shareWhatsApp() {
-        const name = document.getElementById("customer").value || "Customer";
-        const mobile = document.getElementById("mobile").value.replace(/\D/g,"");
-        const { sub, disc, net } = updateCalculations(false);
-        const paid = parseFloat(document.getElementById("paidAmount").value) || 0;
-        const bal = net - paid;
-
-        let itemsText = "";
-        document.querySelectorAll(".item-row").forEach(row => {
-            const item = services[row.querySelector(".sel-item").value];
-            const qty = row.querySelector(".sel-qty").value;
-            itemsText += `• ${item.name} (x${qty}) - ₹${(item.price * qty).toFixed(2)}\n`;
+        const name = document.getElementById('customer').value || "Customer";
+        const mobile = document.getElementById('mobile').value;
+        const date = document.getElementById('billDate').value;
+        const total = document.getElementById('txtGrandTotal').innerText;
+        const paid = document.getElementById('paidAmount').value;
+        const balance = (parseFloat(total.replace('₹','')) - parseFloat(paid)).toFixed(2);
+        
+        // Detailed Items Construction
+        let itemsList = "";
+        document.querySelectorAll('.item-row').forEach((row, index) => {
+            const n = row.querySelector('.row-name').value;
+            const q = row.querySelector('.row-qty').value;
+            const r = row.querySelector('.row-rate').value;
+            if(n) {
+                itemsList += `${index + 1}. *${n}*\n   ${q} x ₹${r} = *₹${(q*r).toFixed(2)}*\n`;
+            }
         });
 
-        const upiLink = `upi://pay?pa=${UPI_ID}&pn=GuptaKirana&am=${bal.toFixed(2)}&cu=INR`;
+        let msg = `🏪 *GUPTA KIRANA STORE*\n`;
+        msg += `📅 Date: ${new Date(date).toLocaleDateString()}\n`;
+        msg += `👤 Customer: *${name}*\n`;
+        msg += `--------------------------\n`;
+        msg += `📦 *ITEMS PURCHASED:*\n${itemsList}`;
+        msg += `--------------------------\n`;
+        msg += `💰 Bill Total: *${total}*\n`;
+        msg += `✅ Amount Paid: *₹${paid}*\n`;
+        
+        if(balance > 0) {
+            const upiLink = `upi://pay?pa=${UPI_ID}&pn=GuptaKirana&am=${balance}&cu=INR`;
+            msg += `🔴 *Balance Due: ₹${balance}*\n\n`;
+            msg += `Pay Balance here:\n${upiLink}\n\n`;
+        } else {
+            msg += `🟢 Status: *FULLY PAID*\n\n`;
+        }
+        
+        msg += `_Thank you for shopping with us!_`;
 
-        const message = `*GUPTA KIRANA STORE - DIGITAL BILL*\n\n` +
-            `Namaste *${name}*,\n` +
-            `Purchase summary:\n\n` +
-            `${itemsText}\n` +
-            `---------------------------\n` +
-            `Subtotal: ₹${sub.toFixed(2)}\n` +
-            `Discount: -₹${disc.toFixed(2)}\n` +
-            `*Grand Total: ₹${net.toFixed(2)}*\n` +
-            `Paid: ₹${paid.toFixed(2)}\n` +
-            `*Balance Due: ₹${bal.toFixed(2)}*\n\n` +
-            (bal > 0 ? `👉 *Tap to Pay Balance (₹${bal.toFixed(2)}):*\n${upiLink}` : `✅ *Payment Full. Thank you!*`);
-
-        window.open(`https://wa.me/${mobile}?text=${encodeURIComponent(message)}`);
+        // Direct WhatsApp API call with +91 prefix
+        window.open(`https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`);
     }
 
     function downloadInvoice() {
         const target = document.getElementById("captureNode");
-        window.scrollTo(0,0);
-        html2canvas(target, { scale: 3, backgroundColor: "#ffffff", width: 750 }).then(canvas => {
+        html2canvas(target, { scale: 3 }).then(canvas => {
             const a = document.createElement("a");
-            a.download = `Bill_${Date.now()}.png`;
-            a.href = canvas.toDataURL("image/png");
+            a.download = `Bill_${document.getElementById('customer').value || 'Customer'}_${Date.now()}.png`;
+            a.href = canvas.toDataURL();
             a.click();
         });
     }
 
-    addItemRow();
+    function saveDraft() {
+        const items = [];
+        document.querySelectorAll('.item-row').forEach(row => {
+            items.push({
+                name: row.querySelector('.row-name').value,
+                qty: row.querySelector('.row-qty').value,
+                rate: row.querySelector('.row-rate').value
+            });
+        });
+        const d = { 
+            name: document.getElementById('customer').value, 
+            mob: document.getElementById('mobile').value, 
+            paid: document.getElementById('paidAmount').value,
+            items 
+        };
+        localStorage.setItem('gks_bill_draft', JSON.stringify(d));
+    }
+
+    function loadDraft() {
+        const saved = localStorage.getItem('gks_bill_draft');
+        if(!saved) return false;
+        const d = JSON.parse(saved);
+        document.getElementById('customer').value = d.name || "";
+        document.getElementById('mobile').value = d.mob || "";
+        document.getElementById('paidAmount').value = d.paid || 0;
+        if(d.items && d.items.length > 0) {
+            d.items.forEach(i => addItemRow(i));
+            return true;
+        }
+        return false;
+    }
+
+    window.onload = init;
 </script>
 
 </body>
