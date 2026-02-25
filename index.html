@@ -489,22 +489,36 @@ async function fetchClient(){
 
 // --- ADVANCE / FULL PAYMENT QR ---
 function generateAdvanceQR(type){
-  let customer=document.getElementById("customer").value || "N/A";
-  let rows=document.querySelectorAll(".itemRow");
-  let subtotal=0;
+  let customer = document.getElementById("customer").value || "N/A";
+  let rows = document.querySelectorAll(".itemRow");
+  let subtotal = 0;
   rows.forEach(row=>{
-    let serviceIndex=row.querySelector(".serviceSelect").value;
-    let service=services[serviceIndex];
-    let qty=parseFloat(row.querySelector(".qty").value)||1;
-    subtotal+=service.price*qty;
+    let serviceIndex = row.querySelector(".serviceSelect").value;
+    let service = services[serviceIndex];
+    let qty = parseFloat(row.querySelector(".qty").value)||1;
+    subtotal += service.price * qty;
   });
-  let amount=0,title="";
-  if(type==="full"){ amount=subtotal; title="FULL PAYMENT REQUEST"; }
-  else{ amount=parseFloat(document.getElementById("advanceAmount").value)||0; if(amount<=0){ alert("Enter Advance"); return; } title="ADVANCE PAYMENT REQUEST"; }
 
-  advanceUpiLink=`upi://pay?pa=${UPI_ID}&pn=Algum%20Creations&am=${amount.toFixed(2)}&cu=INR`;
-  let date=new Date().toLocaleDateString();
-  let receiptHTML=`
+  let discount = parseFloat(document.getElementById("discount").value)||0;
+  let payable = subtotal - discount; // discount include kar diya
+
+  let amount=0, title="";
+  if(type==="full"){ 
+      amount = payable; // ab full payment QR discount ke saath
+      title = "FULL PAYMENT REQUEST"; 
+  } else { 
+      amount = parseFloat(document.getElementById("advanceAmount").value)||0; 
+      if(amount <= 0){ alert("Enter Advance"); return; } 
+      title = "ADVANCE PAYMENT REQUEST"; 
+  }
+
+  // Paid Amount box auto fill ho jaaye
+  document.getElementById("paidAmount").value = amount.toFixed(2);
+
+  advanceUpiLink = `upi://pay?pa=${UPI_ID}&pn=Algum%20Creations&am=${amount.toFixed(2)}&cu=INR`;
+
+  let date = new Date().toLocaleDateString();
+  document.getElementById("advancePreview").innerHTML = `
   <div class="invoice">
     <h3 style="text-align:center;">${title}</h3>
     <hr>
@@ -515,10 +529,9 @@ function generateAdvanceQR(type){
     <br>
     <button class="secondary" onclick="shareAdvanceWhatsApp('${amount.toFixed(2)}','${title}')">Share WhatsApp</button>
   </div>`;
-  document.getElementById("advancePreview").innerHTML=receiptHTML;
+  
   new QRCode(document.getElementById("advanceQR"), advanceUpiLink);
 }
-
 function shareAdvanceWhatsApp(amount,title){
   let mobile=document.getElementById("mobile").value.replace(/\D/g,"");
   if(mobile.length===10) mobile="91"+mobile;
@@ -625,6 +638,10 @@ function shareWhatsApp(){
   let message=`*ALGUM CREATIONS*\nInvoice Status: ${data.status}\nTotal: ₹${data.total}\n${data.status!=="PAID"?"Payment Link:\n"+billUpiLink+"\n":""}`;
   window.open(`https://wa.me/${mobile}?text=${encodeURIComponent(message)}`,"_blank");
 }
+  document.getElementById("discount").addEventListener("input", ()=>{
+    let fullQRBtn = document.querySelector("button[onclick=\"generateAdvanceQR('full')\"]");
+    if(fullQRBtn) fullQRBtn.click();
+});
 </script>
 </body>
 </html>
