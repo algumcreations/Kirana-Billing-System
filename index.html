@@ -450,8 +450,12 @@ function updateTotal(){
   document.getElementById("totalPreview").innerText="Total: ₹"+total.toFixed(2);
 
   // 🔥 Always auto fill paidAmount = total (default full)
-  document.getElementById("paidAmount").value=total.toFixed(2);
-}
+let enterAmt = parseFloat(document.getElementById("advanceAmount").value) || 0;
+
+let balance = total - enterAmt;
+if(balance < 0) balance = 0;
+
+document.getElementById("paidAmount").value = balance.toFixed(2);
 
 addRow();
 
@@ -571,6 +575,7 @@ async function createBill(){
 }
 
 document.getElementById("discount").addEventListener("input",updateTotal);
+document.getElementById("advanceAmount").addEventListener("input", updateTotal);
 
 </script>
 
