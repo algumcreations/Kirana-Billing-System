@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>GKS Enterprise | Professional Billing 2026</title>
+    <title>ACE BILLINGS | SMART BILLING SOLUTIONS</title>
 
     <!-- External Libraries -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -121,8 +121,8 @@
 <div class="app-container">
     <div class="header">
         <div>
-            <h1>Gupta Kirana Store</h1>
-            <p>Digital Billing SaaS 2026</p>
+            <h1>Your Shop Name Shows Here</h1>
+            <p>Space For Tagline</p>
         </div>
         <div class="header-btns">
             <button class="reset-btn" onclick="clearForm()" title="Reset Everything">🗑️</button>
@@ -452,7 +452,7 @@
             if(n) itemsList += `${index + 1}. *${n}* (${q} x ₹${r})\n`;
         });
 
-        let msg = `🏪 *GUPTA KIRANA STORE*\n👤 Customer: *${name}*\n--------------------------\n📦 *ITEMS:*\n${itemsList}--------------------------\n💰 Total: *${total}*\n✅ Paid: *₹${paid}*\n`;
+        let msg = `🏪 *Your Shop Name*\n👤 Customer: *${name}*\n--------------------------\n📦 *ITEMS:*\n${itemsList}--------------------------\n💰 Total: *${total}*\n✅ Paid: *₹${paid}*\n`;
         if(balance > 0) msg += `🔴 *Due: ₹${balance}*\nPay: upi://pay?pa=${UPI_ID}&pn=GuptaKirana&am=${balance}&cu=INR\n`;
         else msg += `🟢 Status: *FULLY PAID*\n`;
         msg += `_Thank you for shopping!_`;
